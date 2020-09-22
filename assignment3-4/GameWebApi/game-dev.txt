@@ -1,0 +1,1 @@
+{"Id":"a433172b-ba26-4f3f-b26e-7f8741e72d66","Name":"Jaakko","Score":0,"Level":0,"IsBanned":false,"CreationTime":"2020-09-22T00:00:00+03:00","PlayerItems":[]}

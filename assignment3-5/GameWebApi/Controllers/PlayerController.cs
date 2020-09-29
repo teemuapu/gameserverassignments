@@ -52,6 +52,27 @@ namespace GameWebApi
             Guid kekkonen = Guid.Parse(id);
             return await _repo.Delete(kekkonen);
         }
+        [HttpGet("/players")]
+        public Task<List<Player>> GetPlayersMinScore([FromQuery] int minScore)
+        {
+            return _repo.GetPlayersMinScore(minScore);
+        }
+        [HttpPut("/players/update/{id}")]
+        public Task<Player> UpdatePlayerName(Guid id, [FromQuery] string name)
+        {
+            return _repo.UpdatePlayerName(id, name);
+        }
+
+        [HttpGet("/players")]
+        public Task<List<Player>> GetPlayersByItemListSize([FromQuery] int amountOfItems)
+        {
+            return _repo.GetPlayersByItemListSize(amountOfItems);
+        }
+        [HttpPost("/players/{id}/items/createquery")]
+        public Task<Player> CreateItemQuery(Guid playerid, NewItem newItem)
+        {
+            return _repo.CreateItemQuery(playerid, newItem);
+        }
     }
 }
 

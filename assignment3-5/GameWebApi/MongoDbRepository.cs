@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
@@ -39,8 +40,25 @@ namespace GameWebApi
             else
             {
                 Player player = await _laattapisteCollection.FindOneAndUpdateAsync(filter, add);
+
                 return item;
             }
+        }
+
+        public async Task<Player> CreateItemQuery(Guid playerid, NewItem newItem)
+        {
+            Item item = new Item()
+            {
+                Level = newItem.Level,
+                Type = newItem.Type,
+                CreationDate = DateTime.Now,
+                ItemId = Guid.NewGuid()
+            };
+            var filter = Builders<Player>.Filter.Eq(player => player.Id, playerid);
+            var push = Builders<Player>.Update.Push("PlayerItems", item);
+
+            return await _laattapisteCollection.FindOneAndUpdateAsync(filter, push);
+
         }
 
         public async Task<Player> Delete(Guid id)
@@ -92,6 +110,20 @@ namespace GameWebApi
             return null;
         }
 
+        public async Task<List<Player>> GetPlayersByItemListSize(int amountOfItems)
+        {
+            var filter = Builders<Player>.Filter.Size(i => i.PlayerItems, amountOfItems);
+            List<Player> pelaajalista = await _laattapisteCollection.Find(filter).ToListAsync();
+            return pelaajalista;
+        }
+
+        public async Task<List<Player>> GetPlayersMinScore(int minScore)
+        {
+            var filter = Builders<Player>.Filter.Gte("Score", minScore);
+            List<Player> pelaajalista = await _laattapisteCollection.Find(filter).ToListAsync();
+            return pelaajalista;
+        }
+
         public async Task<Player> Modify(Guid id, ModifiedPlayer player)
         {
             Player playerModify = await Get(id);
@@ -110,6 +142,15 @@ namespace GameWebApi
 
             Item getItem = await GetItem(playerId, item.ItemId);
             return getItem;
+        }
+
+        public async Task<Player> UpdatePlayerName(Guid id, string name)
+        {
+            var filter = Builders<Player>.Filter.Eq(p => p.Id, id);
+            var update = Builders<Player>.Update.Set(k => k.Name, name);
+
+            return await _laattapisteCollection.FindOneAndUpdateAsync(filter, update);
+
         }
     }
 }
